@@ -1,0 +1,59 @@
+{
+    "name": "dataxform",
+    "version": "1.0.0",
+    "description": "Gather Data Migration Tool",
+    "main": "dist/index.js",
+    "author": "Kevin Bratt <kevin@gather.app>",
+    "license": "Copyright Gather Innovations 2023",
+    "private": true,
+    "bin": {
+        "dataxform": "./bin/dataxform"
+    },
+    "preferGlobal": true,
+    "devDependencies": {
+        "@types/js-yaml": "^3.12.4",
+        "@types/lodash": "^4.14.161",
+        "@types/mime": "^2.0.3",
+        "@types/node": "^14.0.13",
+        "@types/node-fetch": "^2.5.10",
+        "@types/pg": "^8.11.11",
+        "@types/progress": "^2.0.3",
+        "@types/sqlite3": "^3.1.7",
+        "@types/stream-json": "^1.7.1",
+        "typescript": "^3.9.5"
+    },
+    "scripts": {
+        "build": "tsc",
+        "develop": "tsc -w"
+    },
+    "dependencies": {
+        "@types/massive": "^5.4.7",
+        "chalk": "^4.1.0",
+        "conf": "^6.2.4",
+        "csv-generate": "^3.2.4",
+        "csv-parse": "^4.10.1",
+        "csv-parser": "^3.0.0",
+        "csv-stringify": "^5.5.0",
+        "danfojs-node": "^1.1.2",
+        "dotenv": "^16.4.7",
+        "exceljs": "^4.4.0",
+        "fast-csv": "^4.3.6",
+        "fp-ts": "^2.11.8",
+        "get-stdin": "^8.0.0",
+        "got": "^11.8.2",
+        "io-ts": "^2.2.16",
+        "io-ts-types": "^0.5.16",
+        "js-yaml": "^3.14.1",
+        "lodash": "^4.17.20",
+        "massive": "^6.11.3",
+        "meow": "^7.0.1",
+        "mime": "^3.0.0",
+        "node-fetch": "^2.6.1",
+        "pg": "^8.13.1",
+        "pg-promise": "^10.5.6",
+        "progress": "^2.0.3",
+        "sqlite": "^4.0.23",
+        "sqlite3": "^5.0.2",
+        "stream-json": "^1.7.2"
+    }
+}

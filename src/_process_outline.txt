@@ -1,0 +1,33 @@
+Thoughts are:
+
+1. Create a 'staging' schema for each migration...
+    - these can be dynamically named using some kind of naming convention, such as: `clientId_timestamp` or something
+    - track these schema and the fh's referenced along with a migration uuid in the public schema. i.e. use a lookup table since there is the possibility
+    the same fh could have data coming from multiple source systems. Would need to keep track of the migration uuid, fh id's schema
+
+2. Dynamically build a schema for each migration.
+    - for migrations that provide data in CSV, JSON or a file dump this should be feasible
+    - concerns are varying versions that might break the extract queries
+        - not 100% sure how to handle these anomalies at the moment...
+
+3. Tear down process for stale schema
+    - if the migration isn't complete, should maybe archive the staged data for some period of time??
+    - store metadata for completed migrations, then tear down schema
+
+Process Outline (tentative):
+- enter process with client and vendor
+- connect to database
+- create dynamic schema i.e. tables, any indexes, etc.
+- process source data, inserting it appropriately in the schema's tables
+- synchronously perform each step of the vendor specific extract process
+    - this should be stored in a config file that is read prior to extraction
+    - example is that one system may not have case files, while another may or may not have rolodex data
+- use a separate (persisted?) table that stores the transformed data that matches the expected import format for the dataloader
+- perform a sample import
+    - we should create a table that stores heuristic data (percent complete, date of death, case type, etc.)
+    - use some statistical analysis to find a breadth of sample cases to load
+    - somehow flag these cases as part of the sample set
+- once approved by client, finish the process
+- somehow flag the schema (a different persisted table?) as completed
+- once completed, TTL process to archive or destroy expired schema
+- in the event approval is delayed, staging data should be archived for some period of time, then dropped after collection of metadata

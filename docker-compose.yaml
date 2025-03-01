@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  postgres:
+    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+    image: postgres:latest
+    platform: linux/amd64
+    container_name: dataxform-api
+    environment:
+      POSTGRES_USER: datauser
+      POSTGRES_PASSWORD: supersecret
+      POSTGRES_DB: dataxform
+    ports:
+      - "5234:5432"
+    volumes:
+      - ./src/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./src/staticData.sql:/docker-entrypoint-initdb.d/2_staticData.sql
+      # - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:
