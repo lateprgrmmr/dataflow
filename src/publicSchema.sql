@@ -55,6 +55,6 @@ CREATE TABLE data_mappings (
     mapped_value TEXT NOT NULL
 );
 
-CREATE INDEX data_mapping_raw_idx ON data_mappings(raw);
+CREATE INDEX data_mapping_raw_idx ON data_mappings(raw_value);
 CREATE INDEX data_mapping_normalized_idx ON data_mappings(normalized_value);
 CREATE INDEX data_mapping_mapped_value_idx ON data_mappings(mapped_value);
