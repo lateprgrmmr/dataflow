@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as xlsx from 'xlsx';
 import * as sqlite3 from 'sqlite3';
 import { getColumnsDefinition, getColumns, getValuesPlaceholders, getValues, getTableNameMap } from '../shared/utils';
-import { TableData, VendorEnum } from '../types';
+import { TableData, Vendor } from '../types';
 
 
 const pathIsDirectory = (path: string): boolean => { 
@@ -14,7 +14,7 @@ const pathIsDirectory = (path: string): boolean => {
     return fs.statSync(path).isDirectory()
 };
 
-export const xlsxBatch = async (vendor: VendorEnum, fhId: number, directoryPath: string): Promise<string[]> => {
+export const xlsxBatch = async (vendor: Vendor, fhId: number, directoryPath: string): Promise<string[]> => {
     const files = await fs.promises.readdir(directoryPath);
     // console.log('files', files);
 

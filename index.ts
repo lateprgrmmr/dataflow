@@ -3,13 +3,14 @@ import chalk from 'chalk';
 import fs from 'fs';
 import os from 'os';
 // import getStdin from 'get-stdin';
-import { DataXformPart, VendorEnum, VendorBatchType, VendorFileType } from './src/types';
+import { DataXformPart, getVendorEnum, Vendor, VendorBatchType, VendorFileType, VendorLookup } from './src/types';
 import { csvBatch } from './src/extract/csvBatch';
 import { jsonExport } from './src/extract/jsonExport';
 import { xlsxBatch } from './src/extract/xlsxBatch';
 import { getVendorBatchType } from './src/shared/utils';
 import { xlsxExport } from './src/extract/newXlsx';
 import path from 'path';
+import { connectDatabase, Connection } from './src/database/database';
 
 const cli = meow(
     chalk`{underline Usage}
@@ -32,7 +33,7 @@ const cli = meow(
             alias: 'v',
             isRequired: true,
             isMultiple: false,
-            choices: Object.values(VendorEnum),
+            choices: Object.values(Vendor),
         },
         funeralHomeId: {
             type: 'string',
@@ -58,7 +59,7 @@ const cli = meow(
             type: 'string',
             alias: 'i',
             isRequired: true,
-            isMultiple: true,
+            isMultiple: false,
         },
         commit: {
             type: 'boolean',
@@ -71,15 +72,28 @@ const cli = meow(
     inferType: true,
 });
 
-type DataXformFlags = typeof cli.flags;
+type FlagType = typeof cli.flags;
 
-async function main(flags: DataXformFlags) {
-    console.log('flags', flags);
+async function main(flags: FlagType) {
+
+    const vendorInput = cli.flags.vendor as string | undefined;
+
+    if (!vendorInput) {
+        throw new Error(`ERROR: Missing --vendor flag`);
+    }
+
+    const vendor = getVendorEnum(vendorInput);
+    if (!vendor) {
+        throw new Error(`ERROR: Invalid vendor ${vendorInput}`);
+    }
+
+    const db: Connection = await connectDatabase();
+    // console.log('flags', flags);
     const fhId: number = parseInt(flags.funeralHomeId);
     const process: string = flags.process;
     const type: string = flags.type;
     let inputData = Buffer;
-    const fstat = fs.statSync(flags.inputFile[0]);
+    const fstat = fs.statSync(flags.inputFile);
     // Setup the output directory
     // const outputDir = `~/migration_temp/output/${fhId}`;
     const outputDir = path.join(os.homedir(), 'migration_temp', 'output', fhId.toString());
@@ -90,8 +104,13 @@ async function main(flags: DataXformFlags) {
     // Based on vendor, determine which process to run to extract data and build tables in staging schema
     // Lookup VendorFileType based on flags.vendor (this is the format we received the data in)
     // Lookup VendorBatchType based on flags.vendor, bearing in mind that flags.vendor is a string and can't be used as an index
-    const vendorKey = Object.keys(VendorEnum).find(key => VendorEnum[key as keyof typeof VendorEnum] === flags.vendor.toLowerCase());
-    const vendorFileType = getVendorBatchType(vendorKey as VendorEnum);
+    // const vendorKey = Object.keys(Vendor).find(key => Vendor[key as keyof typeof Vendor] === flags.vendor.toLowerCase());
+
+    const vendorKey = getVendorEnum(vendor)
+    // if (vendorKey === undefined) {
+    //     throw new Error(`Vendor must be one of ${Object.values(Vendor)}`);
+    // }
+    const vendorFileType = getVendorBatchType(vendorKey as Vendor);
     // console.log('vendorFileType', vendorFileType);
     if (vendorFileType) {
         switch (vendorFileType) {
@@ -99,7 +118,7 @@ async function main(flags: DataXformFlags) {
                 if (!fstat.isFile()) { // Crakn data is in a single JSON file
                     throw new Error('Input file must be a file');
                 }
-                jsonExport(VendorEnum.crakn, fhId, flags.inputFile[0])
+                jsonExport(vendor, fhId, flags.inputFile[0])
                     .then((result) => {
                         console.log(result);
                     })
@@ -109,10 +128,11 @@ async function main(flags: DataXformFlags) {
                 break;
             case 'csv':
                 console.log('CSV', vendorFileType);
+                csvBatch(db, vendor, fhId, flags.inputFile)
                 break;
             case 'xlsx':
                 console.log('XLSX', vendorFileType);
-                xlsxExport(VendorEnum.osiris, fhId, flags.inputFile[0]);
+                xlsxExport(vendor, fhId, flags.inputFile);
                 break;
             case 'sql':
                 console.log('SQL', vendorFileType);

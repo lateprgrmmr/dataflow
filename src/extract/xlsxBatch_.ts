@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as xlsx from 'xlsx';
 import sqlite3 from 'sqlite3';
-import { VendorEnum } from '../types';
+import { Vendor } from '../types';
 
 // enum FileType {
 //     DC = 'dc',
@@ -11,7 +11,7 @@ import { VendorEnum } from '../types';
 //     DOCUMENTS = 'documents'
 // }
 
-export const xlsxBatch = (vendor: VendorEnum, fhId: number, directoryPath: string): void => {
+export const xlsxBatch = (vendor: Vendor, fhId: number, directoryPath: string): void => {
     // export const init = (basePath: string, client: string, dest: string, file_type: FileType): void => {
     const db_file = path.join(`./${fhId}_${vendor}.db`);
 

@@ -1,4 +1,6 @@
-export enum VendorEnum {
+import * as t from 'io-ts';
+
+export enum Vendor {
     arranger_adv = 'arranger_adv',
     aurora = 'aurora',
     batesville = 'batesville',
@@ -19,6 +21,57 @@ export enum VendorEnum {
     salesforce = 'salesforce',
     srs = 'srs',
 }
+
+export const VendorLookup = {
+    [Vendor.arranger_adv]: 'arranger_adv',
+    [Vendor.aurora]: 'aurora',
+    [Vendor.batesville]: 'batesville',
+    [Vendor.crakn]: 'crakn',
+    [Vendor.directors_asst]: 'directors_asst',
+    [Vendor.funeralone]: 'funeralone',
+    [Vendor.frontrunner]: 'frontrunner',
+    [Vendor.fdm]: 'fdm',
+    [Vendor.funeraltech]: 'funeraltech',
+    [Vendor.halcyon]: 'halcyon',
+    [Vendor.last_writes]: 'last_writes',
+    [Vendor.mims]: 'mims',
+    [Vendor.mortware]: 'mortware',
+    [Vendor.none]: 'none',
+    [Vendor.osiris]: 'osiris',
+    [Vendor.parting_pro]: 'parting_pro',
+    [Vendor.passare]: 'passare',
+    [Vendor.salesforce]: 'salesforce',
+    [Vendor.srs]: 'srs',
+}
+
+export const getVendorEnum = (vend: string): Vendor | null => {
+    if (Object.values(Vendor).includes(vend as Vendor)) {
+        return vend as Vendor;
+    }
+    return null;
+}
+
+export const VendorEnumValue = t.keyof({
+    [Vendor.arranger_adv]: null,
+    [Vendor.aurora]: null,
+    [Vendor.batesville]: null,
+    [Vendor.crakn]: null,
+    [Vendor.directors_asst]: null,
+    [Vendor.funeralone]: null,
+    [Vendor.frontrunner]: null,
+    [Vendor.fdm]: null,
+    [Vendor.funeraltech]: null,
+    [Vendor.halcyon]: null,
+    [Vendor.last_writes]: null,
+    [Vendor.mims]: null,
+    [Vendor.mortware]: null,
+    [Vendor.none]: null,
+    [Vendor.osiris]: null,
+    [Vendor.parting_pro]: null,
+    [Vendor.passare]: null,
+    [Vendor.salesforce]: null,
+    [Vendor.srs]: null,
+});
 
 export enum VendorFileType {
     csv = 'csv', // Passare, FrontRunner, FuneralOne
@@ -55,10 +108,12 @@ export enum DataXformPart {
     docs = 'docs',
 }
 
-export interface TableData {
-    id: number;
-    data: any;
-}
+export type TableData = Record<string, string | number | boolean | null>;
+
+// export interface TableData {
+//     id: number;
+//     data: any;
+// }
 
 // Vendor-specific types
 export enum PassareTableNames {

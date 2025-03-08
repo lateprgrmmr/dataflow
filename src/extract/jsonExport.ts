@@ -1,13 +1,13 @@
 import * as fs from 'fs';
 import * as sqlite3 from 'sqlite3';
-import { TableData, VendorEnum } from '../types';
+import { TableData, Vendor } from '../types';
 import { readFileAsync } from '../shared/utils';
 
 // const path = '/Users/kevinbratt/Downloads/Holt Crakn Data.json';
 
 // TODO: This currently stuffs all the data into a single jsonified column... need to 
 // figure out how to parse the data into individual columns
-export const jsonExport = async (vendor: VendorEnum, fhId: number, directoryPath: string) => {
+export const jsonExport = async (vendor: Vendor, fhId: number, directoryPath: string) => {
 
     try {
         const data = await readFileAsync(directoryPath, 'utf-8');

@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as xlsx from 'xlsx';
 import * as sqlite3 from 'sqlite3';
-import { VendorEnum } from '../types';
+import { Vendor } from '../types';
 import path from 'path';
 
-export const xlsxExport = async (vendor: VendorEnum, fhId: number, directoryPath: string) => {
+export const xlsxExport = async (vendor: Vendor, fhId: number, directoryPath: string) => {
     const dbPath = path.join(`${fhId}_${vendor}.db`);
     const db = new sqlite3.Database(dbPath, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE);
     // read in schema.txt - NOTE: This is currently static for Osiris migrations, but we should build dynamic solution

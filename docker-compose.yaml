@@ -3,7 +3,7 @@ services:
   postgres:
     command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
     image: postgres:latest
-    platform: linux/amd64
+    platform: linux/arm64
     container_name: dataflow-api
     environment:
       POSTGRES_USER: datauser
@@ -12,8 +12,8 @@ services:
     ports:
       - "5234:5432"
     volumes:
-      - ./src/publicSchema.sql:/docker-entrypoint-initdb.d/1_publicSchema.sql
-      - ./src/staticData.sql:/docker-entrypoint-initdb.d/2_staticData.sql
+      - ./src/database/publicSchema.sql:/docker-entrypoint-initdb.d/1_publicSchema.sql
+      - ./src/database/staticData.sql:/docker-entrypoint-initdb.d/2_staticData.sql
       # - postgres_data:/var/lib/postgresql/data
 volumes:
   postgres_data:

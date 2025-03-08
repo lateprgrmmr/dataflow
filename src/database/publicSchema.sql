@@ -58,3 +58,38 @@ CREATE TABLE data_mappings (
 CREATE INDEX data_mapping_raw_idx ON data_mappings(raw_value);
 CREATE INDEX data_mapping_normalized_idx ON data_mappings(normalized_value);
 CREATE INDEX data_mapping_mapped_value_idx ON data_mappings(mapped_value);
+
+DROP FUNCTION IF EXISTS create_dynamic_schema(_schema_name TEXT);
+CREATE FUNCTION create_dynamic_schema(_schema_name TEXT) 
+RETURNS TEXT AS $schema_name$
+DECLARE
+    schema_name TEXT;
+    sql TEXT;
+BEGIN
+    sql := format('CREATE SCHEMA IF NOT EXISTS %I', _schema_name);
+    EXECUTE sql;
+    schema_name := _schema_name;
+    RETURN schema_name;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Schema creation failed: %', SQLERRM;
+        RETURN NULL;
+END;
+$schema_name$
+LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS create_dynamic_table(_table_name TEXT, _columns TEXT);
+CREATE FUNCTION create_dynamic_table(_table_name TEXT, _columns TEXT)
+RETURNS VOID AS $$
+DECLARE
+    sql TEXT;
+BEGIN
+    RAISE NOTICE 'Creating table: %', _table_name;
+    RAISE NOTICE 'Columns: %', _columns;
+    sql := format('
+        CREATE TABLE IF NOT EXISTS %I (
+            id SERIAL PRIMARY KEY,
+            %s);', _table_name, _columns);
+    EXECUTE sql;
+END;
+$$ LANGUAGE plpgsql;
