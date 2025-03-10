@@ -15,5 +15,6 @@ services:
       - ./src/database/publicSchema.sql:/docker-entrypoint-initdb.d/1_publicSchema.sql
       - ./src/database/staticData.sql:/docker-entrypoint-initdb.d/2_staticData.sql
       # - postgres_data:/var/lib/postgresql/data
+
 volumes:
   postgres_data:

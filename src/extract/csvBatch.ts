@@ -5,7 +5,7 @@ import { TableData, Vendor } from '../types';
 import { getColumns, getColumnsDefinition, getTableNameMap, getValues, getValuesPlaceholders, sanitizedColumnName } from '../shared/utils';
 import massive from 'massive';
 import { shouldExcludeFile } from '../shared/constants';
-import { buildSchema, createAndInsertTable } from '../database/api';
+import { buildSchema, createTable } from '../database/api';
 
 /**
  * 
@@ -35,7 +35,7 @@ export const csvBatch = async (db: massive.Database, vendor: Vendor, fhId: numbe
 
             try {
                 const tableData = await readCsv(filePath);
-                await createAndInsertTable(db, vendor, schemaName, tableName, tableData);
+                await createTable(db, vendor, schemaName, tableName, tableData);
             } catch (error) {
                 console.error(`Error processing ${file}`, error);
             }

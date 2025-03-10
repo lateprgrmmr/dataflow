@@ -59,7 +59,7 @@ CREATE INDEX data_mapping_raw_idx ON data_mappings(raw_value);
 CREATE INDEX data_mapping_normalized_idx ON data_mappings(normalized_value);
 CREATE INDEX data_mapping_mapped_value_idx ON data_mappings(mapped_value);
 
-DROP FUNCTION IF EXISTS create_dynamic_schema(_schema_name TEXT);
+-- DROP FUNCTION IF EXISTS create_dynamic_schema(_schema_name TEXT);
 CREATE FUNCTION create_dynamic_schema(_schema_name TEXT) 
 RETURNS TEXT AS $schema_name$
 DECLARE
@@ -78,18 +78,83 @@ END;
 $schema_name$
 LANGUAGE plpgsql;
 
-DROP FUNCTION IF EXISTS create_dynamic_table(_table_name TEXT, _columns TEXT);
-CREATE FUNCTION create_dynamic_table(_table_name TEXT, _columns TEXT)
+-- DROP FUNCTION IF EXISTS create_dynamic_table(_schema_name TEXT, _table_name TEXT, _columns TEXT);
+
+CREATE FUNCTION create_dynamic_table(
+    _schema_name TEXT,
+    _table_name TEXT,
+    _columns TEXT
+    )
 RETURNS VOID AS $$
 DECLARE
     sql TEXT;
 BEGIN
-    RAISE NOTICE 'Creating table: %', _table_name;
+    RAISE NOTICE 'Creating table: %.%', _schema_name, _table_name;
     RAISE NOTICE 'Columns: %', _columns;
-    sql := format('
-        CREATE TABLE IF NOT EXISTS %I (
+    sql := format('CREATE TABLE IF NOT EXISTS %I.%I (
             id SERIAL PRIMARY KEY,
-            %s);', _table_name, _columns);
+            %s);',
+             _schema_name, _table_name, _columns);
     EXECUTE sql;
+END;
+$$ LANGUAGE plpgsql;
+
+
+DROP FUNCTION insert_dynamic_data(_schema_name TEXT, _table_name TEXT, _columns TEXT, _json_values jsonb);
+
+CREATE FUNCTION insert_dynamic_data(
+    _schema_name TEXT,
+    _table_name TEXT,
+    _columns TEXT,
+    _json_values JSONB
+)
+RETURNS VOID AS $$
+DECLARE
+    sql TEXT;
+    full_table_name TEXT;
+BEGIN
+    full_table_name := format('%I.%I', _schema_name, _table_name);
+
+    -- Check if the table exists and is a composite type
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_class c
+        JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = _schema_name AND c.relname = _table_name
+    ) THEN
+        RAISE EXCEPTION 'Table % does not exist or is not recognized as a composite type', full_table_name;
+    END IF;
+
+    -- Construct and execute the insert statement
+    sql := format(
+        'INSERT INTO %I.%I (%s) 
+        SELECT %s FROM jsonb_populate_recordset(NULL::%I.%I, $1);',
+        _schema_name, _table_name, _columns, _columns, _schema_name, _table_name
+    );
+
+    
+    EXECUTE sql USING _json_values;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE FUNCTION insert_dynamic_data(
+    _schema_name TEXT,
+    _table_name TEXT,
+    _columns TEXT,
+    _json_values jsonb
+)
+RETURNS VOID AS $$
+DECLARE
+    sql TEXT;
+BEGIN
+    RAISE NOTICE 'Inserting data into table: %.%', _schema_name, _table_name;
+    RAISE NOTICE 'Columns: %', _columns;
+    RAISE NOTICE 'Values: %', _json_values;
+    sql := format('INSERT INTO %I.%I (%s) SELECT * FROM jsonb_populate_recordset(NULL::%I.%I, $1);',
+              _schema_name, _table_name, _columns, _schema_name, _table_name || ' %ROWTYPE');
+
+    -- sql := format('INSERT INTO %I.%I (%s) SELECT * FROM json_populate_recordset(NULL::%I.%I, $1);',
+    --              _schema_name, _table_name, _columns, _schema_name, _table_name);
+    EXECUTE sql USING _json_values;
 END;
 $$ LANGUAGE plpgsql;

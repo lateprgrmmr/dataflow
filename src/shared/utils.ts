@@ -86,7 +86,7 @@ export const getColumns = (tableData: TableData[]): string => {
     return Object.keys(tableData[0]).map((columnName) => {
         // Ensure the column name is valid SQL (no spaces, special characters, etc.)
         // Also wrapped in brackets to avoid reserved words conflicts
-        return `"${sanitizedColumnName(columnName)}"`
+        return `"${sanitizedColumnName(columnName)}"`;
     }).join(', ');
 };
 
