@@ -49,7 +49,14 @@ const readCsv = (filePath: string): Promise<TableData[]> => {
 
         fs.createReadStream(filePath)
             .pipe(fastCsv.parse({ headers: true }))
-            .on('data', (row) => { rows.push(row) })
+            .on('data', (row) => {
+                // console.log('DATA ROW', row);
+                rows.push(row);
+                // const stringifiedRow = Object.fromEntries(
+                //     Object.entries(row)
+                //     .map(([key, value]) => [key, value === null ? null : String(value)]));
+                // rows.push(stringifiedRow);
+            })
             .on('end', () => { resolve(rows) })
             .on('error', (error) => { reject(error) });
     });

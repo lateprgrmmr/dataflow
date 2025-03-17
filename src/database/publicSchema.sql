@@ -100,7 +100,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-DROP FUNCTION insert_dynamic_data(_schema_name TEXT, _table_name TEXT, _columns TEXT, _json_values jsonb);
+-- DROP FUNCTION insert_dynamic_data(_schema_name TEXT, _table_name TEXT, _columns TEXT, _json_values jsonb);
 
 CREATE FUNCTION insert_dynamic_data(
     _schema_name TEXT,
@@ -125,36 +125,19 @@ BEGIN
     END IF;
 
     -- Construct and execute the insert statement
+    -- sql := format(
+    --     'INSERT INTO %I.%I (%s) 
+    --     SELECT %s FROM jsonb_populate_recordset(NULL::%I.%I, $1);',
+    --     _schema_name, _table_name, _columns, _columns, _schema_name, _table_name
+    -- );
     sql := format(
         'INSERT INTO %I.%I (%s) 
-        SELECT %s FROM jsonb_populate_recordset(NULL::%I.%I, $1);',
-        _schema_name, _table_name, _columns, _columns, _schema_name, _table_name
+        SELECT %s FROM jsonb_populate_recordset(NULL::%I.%I, $1::jsonb) AS t(%s);',
+        _schema_name, _table_name, _columns, _columns, _schema_name, _table_name, 
+        array_to_string(string_to_array(_columns, ','), ' TEXT, ') || ' TEXT'
     );
 
     
-    EXECUTE sql USING _json_values;
-END;
-$$ LANGUAGE plpgsql;
-
-
-CREATE FUNCTION insert_dynamic_data(
-    _schema_name TEXT,
-    _table_name TEXT,
-    _columns TEXT,
-    _json_values jsonb
-)
-RETURNS VOID AS $$
-DECLARE
-    sql TEXT;
-BEGIN
-    RAISE NOTICE 'Inserting data into table: %.%', _schema_name, _table_name;
-    RAISE NOTICE 'Columns: %', _columns;
-    RAISE NOTICE 'Values: %', _json_values;
-    sql := format('INSERT INTO %I.%I (%s) SELECT * FROM jsonb_populate_recordset(NULL::%I.%I, $1);',
-              _schema_name, _table_name, _columns, _schema_name, _table_name || ' %ROWTYPE');
-
-    -- sql := format('INSERT INTO %I.%I (%s) SELECT * FROM json_populate_recordset(NULL::%I.%I, $1);',
-    --              _schema_name, _table_name, _columns, _schema_name, _table_name);
     EXECUTE sql USING _json_values;
 END;
 $$ LANGUAGE plpgsql;

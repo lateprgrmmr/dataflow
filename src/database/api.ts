@@ -21,9 +21,15 @@ export const insertData = async (db: Connection, vendor: Vendor, schemaName: str
     // insert data into the table
     const tableName = getTableNameMap(vendor, fileName);
     const columnsArr = getColumns(data);
-    console.log(`Inserting data...`, columnsArr, '\n#######\n');
-    console.log(`Inserting data into ${schemaName}.${tableName}...`);
-    const jsonData = JSON.stringify(data);
+
+    const stringifiedData = data.map(row =>
+        Object.fromEntries(Object.entries(row).map(([key, value]) => [key, value !== null && value !== undefined ? String(value) : '']))
+    );
+    console.log(`Inserting data into ${schemaName}.${tableName}...`, stringifiedData); // Log data before insertion
+
+    // console.log(`Inserting data...`, columnsArr, '\n#######\n');
+    // console.log(`Inserting data into ${schemaName}.${tableName}...`);
+    const jsonData = JSON.stringify(stringifiedData);
 
     await db.insert_dynamic_data(schemaName, tableName, columnsArr, jsonData);
 };
