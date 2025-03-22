@@ -213,3 +213,16 @@ export const OsirisTableNameMap = (sheetName: string): string => {
         return 'SKIP';
     }
 };
+
+export const TableNameMapLookup = (vendor: string) => {
+    switch (vendor) {
+        case 'frontrunner':
+            return FrontRunnerTableNameMap;
+        case 'passare':
+            return PassareTableNameMap;
+        case 'osiris':
+            return OsirisTableNameMap;
+        default:
+            return () => 'SKIP';
+    }
+};

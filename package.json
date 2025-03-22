@@ -28,6 +28,7 @@
         "db": "docker compose down && docker compose up"
     },
     "dependencies": {
+        "@fast-csv/parse": "^5.0.2",
         "@types/massive": "^5.4.7",
         "chalk": "^4.1.0",
         "conf": "^6.2.4",
