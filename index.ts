@@ -35,7 +35,7 @@ const cli = meow(
             isMultiple: false,
             choices: Object.values(Vendor),
         },
-        funeralHomeId: {
+        clientName: {
             type: 'string',
             alias: 'f',
             isRequired: true,
@@ -89,14 +89,15 @@ async function main(flags: FlagType) {
 
     const db: Connection = await connectDatabase();
     // console.log('flags', flags);
-    const fhId: number = parseInt(flags.funeralHomeId);
+    // const fhId: number = parseInt(flags.funeralHomeId);
+    const clientName = flags.clientName;
     const process: string = flags.process;
     const type: string = flags.type;
     let inputData = Buffer;
     const fstat = fs.statSync(flags.inputFile);
     // Setup the output directory
     // const outputDir = `~/migration_temp/output/${fhId}`;
-    const outputDir = path.join(os.homedir(), 'migration_temp', 'output', fhId.toString());
+    const outputDir = path.join(os.homedir(), 'migration_temp', 'output', clientName);
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
@@ -118,7 +119,7 @@ async function main(flags: FlagType) {
                 if (!fstat.isFile()) { // Crakn data is in a single JSON file
                     throw new Error('Input file must be a file');
                 }
-                jsonExport(vendor, fhId, flags.inputFile[0])
+                jsonExport(vendor, clientName, flags.inputFile[0])
                     .then((result) => {
                         console.log(result);
                     })
@@ -128,11 +129,11 @@ async function main(flags: FlagType) {
                 break;
             case 'csv':
                 console.log('CSV', vendorFileType);
-                csvBatch(db, vendor, fhId, flags.inputFile)
+                csvBatch(db, vendor, clientName, flags.inputFile)
                 break;
             case 'xlsx':
                 console.log('XLSX', vendorFileType);
-                xlsxExport(vendor, fhId, flags.inputFile);
+                xlsxExport(vendor, clientName, flags.inputFile);
                 break;
             case 'sql':
                 console.log('SQL', vendorFileType);

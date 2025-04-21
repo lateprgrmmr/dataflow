@@ -1,35 +1,40 @@
 import { Connection } from "./database";
-import { getColumns, getColumnsDefinition, getTableNameMap } from "../shared/utils";
-import { TableData, Vendor } from "../types";
+import { getTableNameMap } from "../shared/utils";
+import { RawDataRow, TableData, Vendor } from "../types";
 
-export const buildSchema = async (db: Connection, vendor: Vendor, fhId: number): Promise<Array<Record<string, string>>> => {
-    return db.create_dynamic_schema(`${vendor}_${fhId}`);
-};
 
-export const createTable = async (db: Connection, vendor: Vendor, schemaName: string, fileName: string, data: TableData[]) => {
-    // create a table, with dynamic schema based on the column defs provided
+export const stageData = async (db: Connection, vendor: Vendor, clientName: string, fileName: string, data: TableData[]) => {
+    const vendorRecord = await db.staging.vendor.findOne({ key: vendor });
+    if (!vendorRecord) {
+        throw new Error(`Vendor ${vendor} not found in the database`);
+    }
     const tableName = getTableNameMap(vendor, fileName);
-    // console.log(`Processed ${fileName} successfully, creating table ${tableName}`);
-    const columns = getColumnsDefinition(data, true);
-    // console.log(`${tableName} Columns: ${columns}\n########\n`);
-    console.log(`Creating table ${schemaName}.${tableName}...`);
-    await db.create_dynamic_table(schemaName, tableName, columns);
-    await insertData(db, vendor, schemaName, fileName, data, columns);
+    console.log(`Staging data: ${ data.length} rows in ${tableName}`);
+    const newBatch = await db.staging.migration_batch.insert({
+        vendor_id: vendorRecord.id,
+        client_name: clientName,
+    });
+
+    const start = new Date();
+    const payload: RawDataRow[] = data.map(row => ({
+        migration_batch_id: newBatch.id,
+        client: clientName,
+        vendor_id: vendorRecord.id,
+        file_name: fileName,
+        logical_table_name: tableName,
+        raw_data: JSON.stringify(row),
+    }))
+
+    await batchInsert(db, payload);
+    const end = new Date();
+    const duration = end.getTime() - start.getTime();
+    console.log(`Staged data in ${duration}ms`);
 };
 
-export const insertData = async (db: Connection, vendor: Vendor, schemaName: string, fileName: string, data: TableData[], columns: string) => {
-    // insert data into the table
-    const tableName = getTableNameMap(vendor, fileName);
-    const columnsArr = getColumns(data);
-
-    const stringifiedData = data.map(row =>
-        Object.fromEntries(Object.entries(row).map(([key, value]) => [key, value !== null && value !== undefined ? String(value) : '']))
-    );
-    console.log(`Inserting data into ${schemaName}.${tableName}...`, stringifiedData); // Log data before insertion
-
-    // console.log(`Inserting data...`, columnsArr, '\n#######\n');
-    // console.log(`Inserting data into ${schemaName}.${tableName}...`);
-    const jsonData = JSON.stringify(stringifiedData);
-
-    await db.insert_dynamic_data(schemaName, tableName, columnsArr, jsonData);
-};
+export const batchInsert = async(db: Connection, rows: RawDataRow[]) => {
+    const batchSize = 100;
+    for (let i = 0; i < rows.length; i += batchSize) {
+        const batch = rows.slice(i, i + batchSize);
+        await db.staging.migration_raw_data.insert(batch);
+    }
+}

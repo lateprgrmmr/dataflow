@@ -1,5 +1,13 @@
 import * as t from 'io-ts';
 
+export interface RawDataRow {
+    vendor_id: number;
+    client: string;
+    file_name: string;
+    logical_table_name: string;
+    raw_data: string;
+}
+
 export enum Vendor {
     arranger_adv = 'arranger_adv',
     aurora = 'aurora',

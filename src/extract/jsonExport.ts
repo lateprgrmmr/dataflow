@@ -7,13 +7,13 @@ import { readFileAsync } from '../shared/utils';
 
 // TODO: This currently stuffs all the data into a single jsonified column... need to 
 // figure out how to parse the data into individual columns
-export const jsonExport = async (vendor: Vendor, fhId: number, directoryPath: string) => {
+export const jsonExport = async (vendor: Vendor, clientName: string, directoryPath: string) => {
 
     try {
         const data = await readFileAsync(directoryPath, 'utf-8');
         const json = JSON.parse(data);
 
-        const db = new sqlite3.Database(`./${fhId}_${vendor}.db`, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE);
+        const db = new sqlite3.Database(`./${clientName}_${vendor}.db`, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE);
 
         for (const key of Object.keys(json)) {
             const tableData: TableData[] = json[key];

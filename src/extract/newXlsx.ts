@@ -4,8 +4,8 @@ import * as sqlite3 from 'sqlite3';
 import { Vendor } from '../types';
 import path from 'path';
 
-export const xlsxExport = async (vendor: Vendor, fhId: number, directoryPath: string) => {
-    const dbPath = path.join(`${fhId}_${vendor}.db`);
+export const xlsxExport = async (vendor: Vendor, clientName: string, directoryPath: string) => {
+    const dbPath = path.join(`${clientName}_${vendor}.db`);
     const db = new sqlite3.Database(dbPath, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE);
     // read in schema.txt - NOTE: This is currently static for Osiris migrations, but we should build dynamic solution
     const schema = fs.readFileSync('/Users/kevinbratt/dataxform/src/extract/queries/osiris/schema.txt', 'utf-8');

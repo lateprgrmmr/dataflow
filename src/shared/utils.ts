@@ -7,7 +7,7 @@ import { promisify } from 'util';
 
 export const readFileAsync = promisify(fs.readFile);
 
-export const sanitizedColumnName = (columnName: string) => columnName.replace(/[^a-zA-Z0-9_]/g, '_');
+export const sanitizedColumnName = (columnName: string) => columnName.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
 
 const vendorBatchTypeLookup: Record<Vendor, VendorFileType | undefined> = {
     [Vendor.arranger_adv]: VendorFileType.XXXX,
