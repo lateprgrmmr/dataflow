@@ -19,6 +19,14 @@ import { stageData } from '../database/api';
  */
 
 export const csvBatch = async (db: massive.Database, vendor: Vendor, clientName: string, directoryPath: string) => {
+    const vendorRecord = await db.staging.vendor.findOne({ key: vendor });
+    if (!vendorRecord) {
+        throw new Error(`Vendor ${vendor} not found in the database`);
+    }
+    const newBatch = await db.staging.migration_batch.insert({
+        vendor_id: vendorRecord.id,
+        client_name: clientName,
+    });
     const files = await fs.promises.readdir(directoryPath);
 
     for (const file of files) {
@@ -28,7 +36,7 @@ export const csvBatch = async (db: massive.Database, vendor: Vendor, clientName:
 
             try {
                 const tableData = await readCsv(filePath);
-                await stageData(db, vendor, clientName, tableName, tableData);
+                await stageData(db, vendorRecord, clientName, tableName, tableData, newBatch.id);
             } catch (error) {
                 console.error(`Error processing ${file}`, error);
             }

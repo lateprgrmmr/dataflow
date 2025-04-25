@@ -8,6 +8,13 @@ export interface RawDataRow {
     raw_data: string;
 }
 
+export interface VendorRecord {
+    id: number;
+    key: Vendor;
+    name: string;
+    description: string;
+}
+
 export enum Vendor {
     arranger_adv = 'arranger_adv',
     aurora = 'aurora',
