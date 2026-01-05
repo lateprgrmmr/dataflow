@@ -1,0 +1,26 @@
+{
+    "run_id": "2025-12-30_client-123",
+    "client_id": "123",
+    "status": "pending",
+    "created_at": "2025-12-30T17:00:00Z",
+    "updated_at": "2025-12-30T17:00:00Z",
+    "inputs": {
+      "source": {
+        "vendor": "sqlserver",
+        "type": "bak",
+        "path": "input/source.bak"
+      }
+    },
+    "environment": {
+      "orchestrator_version": "0.1.0",
+      "host": "local",
+      "timezone": "UTC"
+    },
+    "steps": {
+      "restore_source": { "status": "pending" },
+      "inspect_schema": { "status": "pending" },
+      "extract_raw": { "status": "pending" },
+      "stage_postgres": { "status": "pending" }
+    }
+  }
+  

@@ -241,3 +241,13 @@ export const TableNameMapLookup = (vendor: string) => {
             return () => 'SKIP';
     }
 };
+
+export enum BatchType {
+    Case = 'case',
+    Entity = 'entity',
+    CaseFile = 'casefile',
+    Rolodex = 'rolodex',
+    Photo = 'photo',
+    Obit = 'obit',
+    Event = 'event',
+}

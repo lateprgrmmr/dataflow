@@ -3,14 +3,14 @@ import chalk from 'chalk';
 import fs from 'fs';
 import os from 'os';
 // import getStdin from 'get-stdin';
-import { DataXformPart, getVendorEnum, Vendor, VendorBatchType, VendorFileType, VendorLookup } from './src/types';
-import { csvBatch } from './src/extract/csvBatch';
-import { jsonExport } from './src/extract/jsonExport';
-import { xlsxBatch } from './src/extract/xlsxBatch';
-import { getVendorBatchType } from './src/shared/utils';
-import { xlsxExport } from './src/extract/newXlsx';
+import { DataXformPart, getVendorEnum, Vendor, VendorBatchType, VendorFileType, VendorLookup } from './types';
+import { csvBatch } from './extract/csvBatch';
+import { jsonExport } from './extract/jsonExport';
+import { xlsxBatch } from './extract/xlsxBatch';
+import { getVendorBatchType } from './shared/utils';
+import { xlsxExport } from './extract/newXlsx';
 import path from 'path';
-import { connectDatabase, Connection } from './src/database/database';
+import { connectDatabase, Connection } from './database/database';
 
 const cli = meow(
     chalk`{underline Usage}
