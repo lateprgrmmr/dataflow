@@ -1,4 +1,7 @@
+import path from 'path';
+import os from 'os';
 
+export const getMigrationTempDir = (client:string) => path.join(os.homedir(), 'migration_temp', 'output', client);
 
 export const EXCLUDED_FILES = [
     // FrontRunner

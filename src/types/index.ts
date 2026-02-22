@@ -1,4 +1,24 @@
 import * as t from 'io-ts';
+import { Connection } from '../database/database';
+
+export interface MigrationRecord {
+    id: number;
+    client_name: string;
+    vendor_id: number;
+    created_at: Date;
+    updated_at: Date;
+    status: 'pending' | 'in_progress' | 'review' | 'completed' | 'failed';
+}
+
+export interface MigrationContext {
+    migration_id: number;
+    vendor: Vendor;
+    clientname: string;
+    type: DataXformPart;
+    inputPath: string;
+    outputDir: string;
+    db: Connection;
+}
 
 export interface RawDataRow {
     vendor_id: number;
@@ -16,47 +36,47 @@ export interface VendorRecord {
 }
 
 export enum Vendor {
-    arranger_adv = 'arranger_adv',
-    aurora = 'aurora',
-    batesville = 'batesville',
-    crakn = 'crakn',
-    directors_asst = 'directors_asst',
-    funeralone = 'funeralone',
+    // arranger_adv = 'arranger_adv',
+    // aurora = 'aurora',
+    // batesville = 'batesville',
+    // crakn = 'crakn',
+    // directors_asst = 'directors_asst',
+    // funeralone = 'funeralone',
     frontrunner = 'frontrunner',
-    fdm = 'fdm',
-    funeraltech = 'funeraltech',
-    halcyon = 'halcyon',
-    last_writes = 'last_writes',
-    mims = 'mims',
-    mortware = 'mortware',
-    none = 'none',
-    osiris = 'osiris',
-    parting_pro = 'parting_pro',
-    passare = 'passare',
-    salesforce = 'salesforce',
-    srs = 'srs',
+    // fdm = 'fdm',
+    // funeraltech = 'funeraltech',
+    // halcyon = 'halcyon',
+    // last_writes = 'last_writes',
+    // mims = 'mims',
+    // mortware = 'mortware',
+    // none = 'none',
+    // osiris = 'osiris',
+    // parting_pro = 'parting_pro',
+    // passare = 'passare',
+    // salesforce = 'salesforce',
+    // srs = 'srs',
 }
 
 export const VendorLookup = {
-    [Vendor.arranger_adv]: 'arranger_adv',
-    [Vendor.aurora]: 'aurora',
-    [Vendor.batesville]: 'batesville',
-    [Vendor.crakn]: 'crakn',
-    [Vendor.directors_asst]: 'directors_asst',
-    [Vendor.funeralone]: 'funeralone',
+    // [Vendor.arranger_adv]: 'arranger_adv',
+    // [Vendor.aurora]: 'aurora',
+    // [Vendor.batesville]: 'batesville',
+    // [Vendor.crakn]: 'crakn',
+    // [Vendor.directors_asst]: 'directors_asst',
+    // [Vendor.funeralone]: 'funeralone',
     [Vendor.frontrunner]: 'frontrunner',
-    [Vendor.fdm]: 'fdm',
-    [Vendor.funeraltech]: 'funeraltech',
-    [Vendor.halcyon]: 'halcyon',
-    [Vendor.last_writes]: 'last_writes',
-    [Vendor.mims]: 'mims',
-    [Vendor.mortware]: 'mortware',
-    [Vendor.none]: 'none',
-    [Vendor.osiris]: 'osiris',
-    [Vendor.parting_pro]: 'parting_pro',
-    [Vendor.passare]: 'passare',
-    [Vendor.salesforce]: 'salesforce',
-    [Vendor.srs]: 'srs',
+    // [Vendor.fdm]: 'fdm',
+    // [Vendor.funeraltech]: 'funeraltech',
+    // [Vendor.halcyon]: 'halcyon',
+    // [Vendor.last_writes]: 'last_writes',
+    // [Vendor.mims]: 'mims',
+    // [Vendor.mortware]: 'mortware',
+    // [Vendor.none]: 'none',
+    // [Vendor.osiris]: 'osiris',
+    // [Vendor.parting_pro]: 'parting_pro',
+    // [Vendor.passare]: 'passare',
+    // [Vendor.salesforce]: 'salesforce',
+    // [Vendor.srs]: 'srs',
 }
 
 export const getVendorEnum = (vend: string): Vendor | null => {
@@ -67,25 +87,25 @@ export const getVendorEnum = (vend: string): Vendor | null => {
 }
 
 export const VendorEnumValue = t.keyof({
-    [Vendor.arranger_adv]: null,
-    [Vendor.aurora]: null,
-    [Vendor.batesville]: null,
-    [Vendor.crakn]: null,
-    [Vendor.directors_asst]: null,
-    [Vendor.funeralone]: null,
+    // [Vendor.arranger_adv]: null,
+    // [Vendor.aurora]: null,
+    // [Vendor.batesville]: null,
+    // [Vendor.crakn]: null,
+    // [Vendor.directors_asst]: null,
+    // [Vendor.funeralone]: null,
     [Vendor.frontrunner]: null,
-    [Vendor.fdm]: null,
-    [Vendor.funeraltech]: null,
-    [Vendor.halcyon]: null,
-    [Vendor.last_writes]: null,
-    [Vendor.mims]: null,
-    [Vendor.mortware]: null,
-    [Vendor.none]: null,
-    [Vendor.osiris]: null,
-    [Vendor.parting_pro]: null,
-    [Vendor.passare]: null,
-    [Vendor.salesforce]: null,
-    [Vendor.srs]: null,
+    // [Vendor.fdm]: null,
+    // [Vendor.funeraltech]: null,
+    // [Vendor.halcyon]: null,
+    // [Vendor.last_writes]: null,
+    // [Vendor.mims]: null,
+    // [Vendor.mortware]: null,
+    // [Vendor.none]: null,
+    // [Vendor.osiris]: null,
+    // [Vendor.parting_pro]: null,
+    // [Vendor.passare]: null,
+    // [Vendor.salesforce]: null,
+    // [Vendor.srs]: null,
 });
 
 export enum VendorFileType {

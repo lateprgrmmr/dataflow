@@ -1,5 +1,5 @@
 
-INSERT INTO staging.vendor (key, name) VALUES 
+INSERT INTO vendor (key, name) VALUES 
     ('arranger_adv', 'Arranger''s Adv.'),
     ('aurora', 'Aurora'),
     ('batesville', 'Batesville'),

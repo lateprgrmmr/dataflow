@@ -69,3 +69,11 @@ export interface Run {
     errors?: RunError[];
     notes?: string[];
 }
+
+export enum FrontRunnerSteps {
+    ProcessCsvDirectory = 'process_csv_directory',
+    BuildFrontrunnerStagingViews = 'build_frontrunner_staging_views',
+    ExtractFrontrunnerCases = 'extract_frontrunner_cases',
+    ExtractFrontrunnerCaseContacts = 'extract_frontrunner_case_contacts',
+    StageFrontrunnerCasesToImport = 'stage_frontrunner_cases_to_import',
+}

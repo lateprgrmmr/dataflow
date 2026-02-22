@@ -13,9 +13,8 @@ services:
       - "5234:5432"
     volumes:
       - ./src/database/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
-      # - ./extensions.sql:/docker-entrypoint-initdb.d/1_extensions.sql
-      # - ./src/database/publicSchema.sql:/docker-entrypoint-initdb.d/2_publicSchema.sql
-      # - ./src/database/staticData.sql:/docker-entrypoint-initdb.d/3_staticData.sql
+      - ./src/database/extensions.sql:/docker-entrypoint-initdb.d/2_extensions.sql
+      - ./src/database/staticData.sql:/docker-entrypoint-initdb.d/3_staticData.sql
       - postgres_data:/var/lib/postgresql/data
 
 volumes:

@@ -1,6 +1,6 @@
 import meow from 'meow';
 import chalk from 'chalk';
-import { loadRun } from './runtime/run';
+import { generateRunFile, loadRun } from './runtime/run';
 import { MigrationContext } from './runtime/context';
 import { colors } from './shared/types';
 import { runVendorPipeline } from './vendors';
@@ -42,6 +42,7 @@ type FlagType = typeof cli.flags;
 
 async function main(flags: FlagType) {
     const { vendor, clientName, runPath } = flags;
+    const generatedRun = generateRunFile(clientName);
 
     const run = await loadRun(runPath);
     const context = new MigrationContext(clientName, vendor, runPath, run);

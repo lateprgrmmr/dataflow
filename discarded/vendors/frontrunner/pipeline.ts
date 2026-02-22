@@ -1,5 +1,6 @@
 import { MigrationContext } from "../../runtime/context";
 import { ingestCsvToRawStaging } from "../../runtime/ingest/csv";
+import { FrontRunnerSteps } from "../../shared/types";
 import {
     buildFrontrunnerStagingViews,
     extractFrontrunnerCaseContacts,
@@ -11,31 +12,31 @@ export const runFrontrunnerPipeline = async (ctx: MigrationContext) => {
     console.log('Running Frontrunner pipeline...');
     const steps = ctx.run.steps;
 
-    if (!ctx.isStepCompleted('process_csv_directory')) {
+    if (!ctx.isStepCompleted(FrontRunnerSteps.ProcessCsvDirectory)) {
         console.log('Steps:', steps.process_csv_directory.status);
         // Ingest CSV data
-        await ctx.startStep('process_csv_directory');
+        await ctx.startStep(FrontRunnerSteps.ProcessCsvDirectory);
         try {
             await ingestCsvToRawStaging(ctx);
-            await ctx.completeStep('process_csv_directory', []);
+            await ctx.completeStep(FrontRunnerSteps.ProcessCsvDirectory, []);
             console.log('CSV data extracted.');
         } catch (error) {
-            await ctx.failStep('process_csv_directory', error as Error);
+            await ctx.failStep(FrontRunnerSteps.ProcessCsvDirectory, error as Error);
             throw error;
         }
     } else {
         // skipping, already completed
         console.log('CSV data already extracted.');
     }
-    if (!ctx.isStepCompleted('build_frontrunner_staging_views')) {
+    if (!ctx.isStepCompleted(FrontRunnerSteps.BuildFrontrunnerStagingViews)) {
         // Stage data to Postgres
-        await ctx.startStep('build_frontrunner_staging_views');
+        await ctx.startStep(FrontRunnerSteps.BuildFrontrunnerStagingViews);
         try {
             await buildFrontrunnerStagingViews(ctx);
-            await ctx.completeStep('build_frontrunner_staging_views', []);
+            await ctx.completeStep(FrontRunnerSteps.BuildFrontrunnerStagingViews, []);
             console.log('Postgres data staged.');
         } catch (error) {
-            await ctx.failStep('build_frontrunner_staging_views', error as Error);
+            await ctx.failStep(FrontRunnerSteps.BuildFrontrunnerStagingViews, error as Error);
             throw error;
         }
     } else {
@@ -45,24 +46,24 @@ export const runFrontrunnerPipeline = async (ctx: MigrationContext) => {
 
     // Extract cases from Postgres
     // this is idempotent, so we can run it multiple times
-    await ctx.startStep('extract_frontrunner_cases');
+    await ctx.startStep(FrontRunnerSteps.ExtractFrontrunnerCases);
     try {
         await extractFrontrunnerCases(ctx);
-        await ctx.completeStep('extract_frontrunner_cases', []);
+        await ctx.completeStep(FrontRunnerSteps.ExtractFrontrunnerCases, []);
         console.log('Cases extracted.');
     } catch (error) {
-        await ctx.failStep('extract_frontrunner_cases', error as Error);
+        await ctx.failStep(FrontRunnerSteps.ExtractFrontrunnerCases, error as Error);
         throw error;
     }
 
     // Extract contacts from Postgres
-    await ctx.startStep('extract_frontrunner_contacts');
+    await ctx.startStep(FrontRunnerSteps.ExtractFrontrunnerCaseContacts);
     try {
         await extractFrontrunnerCaseContacts(ctx);
-        await ctx.completeStep('extract_frontrunner_contacts', []);
+        await ctx.completeStep(FrontRunnerSteps.ExtractFrontrunnerCaseContacts, []);
         console.log('Contacts extracted.');
     } catch (error) {
-        await ctx.failStep('extract_frontrunner_contacts', error as Error);
+        await ctx.failStep(FrontRunnerSteps.ExtractFrontrunnerCaseContacts, error as Error);
         throw error;
     }
 

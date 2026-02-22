@@ -1,6 +1,6 @@
 import { Connection } from "./database";
 import { getTableNameMap } from "../shared/utils";
-import { RawDataRow, TableData, Vendor, VendorRecord } from "../types";
+import { MigrationRecord, RawDataRow, TableData, Vendor, VendorRecord } from "../types";
 
 
 export const stageData = async (db: Connection, vendor: VendorRecord, clientName: string, fileName: string, data: TableData[], batchId: number) => {
@@ -29,4 +29,23 @@ export const batchInsert = async(db: Connection, rows: RawDataRow[]) => {
         const batch = rows.slice(i, i + batchSize);
         await db.staging.migration_raw_data.insert(batch);
     }
+}
+
+export const findOrCreateMigration = async (db: Connection, clientName: string, vendorId: number): Promise<MigrationRecord> => {
+    console.log(`Finding or creating migration for client ${clientName} and vendor ${vendorId}`);
+    const migrationRecord = await db.migration.find({
+        client_name: clientName,
+        vendor_id: vendorId,
+    });
+    console.log(`existing migrationRecord`, migrationRecord);
+    if (migrationRecord?.length > 0) {
+        console.log(`Found existing migrationRecord`, migrationRecord[0]);
+        return migrationRecord[0];
+    }
+    const newMigrationRecord = await db.migration.insert({
+        client_name: clientName,
+        vendor_id: vendorId,
+    });
+    console.log(`newMigrationRecord`, newMigrationRecord);
+    return newMigrationRecord;
 }

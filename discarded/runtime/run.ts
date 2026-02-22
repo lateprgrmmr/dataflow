@@ -2,6 +2,12 @@ import path from 'path';
 import fs from 'fs/promises';
 import { Run } from '../shared/types';
 
+export const generateRunFile = (xtothez: string) => {
+    return {
+        name: xtothez
+    }
+}
+
 export const loadRun = async (runPath: string): Promise<Run> => {
     const runFile = path.join(runPath, 'run.json');
     const raw = await fs.readFile(runFile, 'utf8');

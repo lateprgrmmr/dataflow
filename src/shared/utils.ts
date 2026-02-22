@@ -1,34 +1,33 @@
 import * as fs from 'fs';
-import * as sqlite3 from 'sqlite3';
-import * as xlsx from 'xlsx';
+import { promisify } from 'util';
+// import * as xlsx from 'xlsx';
 
 import { FrontRunnerTableNameMap, PassareTableNameMap, TableData, VendorBatchType, Vendor, VendorFileType } from '../types';
-import { promisify } from 'util';
 
 export const readFileAsync = promisify(fs.readFile);
 
 export const sanitizedColumnName = (columnName: string) => columnName.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
 
 const vendorBatchTypeLookup: Record<Vendor, VendorFileType | undefined> = {
-    [Vendor.arranger_adv]: VendorFileType.XXXX,
-    [Vendor.aurora]: VendorFileType.csv,
-    [Vendor.batesville]: VendorFileType.sql,
-    [Vendor.crakn]: VendorFileType.json,
-    [Vendor.directors_asst]: VendorFileType.sql,
-    [Vendor.funeralone]: VendorFileType.csv,
+    // [Vendor.arranger_adv]: VendorFileType.XXXX,
+    // [Vendor.aurora]: VendorFileType.csv,
+    // [Vendor.batesville]: VendorFileType.sql,
+    // [Vendor.crakn]: VendorFileType.json,
+    // [Vendor.directors_asst]: VendorFileType.sql,
+    // [Vendor.funeralone]: VendorFileType.csv,
     [Vendor.frontrunner]: VendorFileType.csv,
-    [Vendor.fdm]: VendorFileType.csv,
-    [Vendor.funeraltech]: VendorFileType.XXXX,
-    [Vendor.halcyon]: VendorFileType.sql,
-    [Vendor.last_writes]: VendorFileType.XXXX,
-    [Vendor.mims]: VendorFileType.sql,
-    [Vendor.mortware]: VendorFileType.sql,
-    [Vendor.none]: VendorFileType.XXXX,
-    [Vendor.osiris]: VendorFileType.xlsx,
-    [Vendor.parting_pro]: VendorFileType.XXXX,
-    [Vendor.passare]: VendorFileType.csv,
-    [Vendor.salesforce]: VendorFileType.XXXX,
-    [Vendor.srs]: VendorFileType.sql,
+    // [Vendor.fdm]: VendorFileType.csv,
+    // [Vendor.funeraltech]: VendorFileType.XXXX,
+    // [Vendor.halcyon]: VendorFileType.sql,
+    // [Vendor.last_writes]: VendorFileType.XXXX,
+    // [Vendor.mims]: VendorFileType.sql,
+    // [Vendor.mortware]: VendorFileType.sql,
+    // [Vendor.none]: VendorFileType.XXXX,
+    // [Vendor.osiris]: VendorFileType.xlsx,
+    // [Vendor.parting_pro]: VendorFileType.XXXX,
+    // [Vendor.passare]: VendorFileType.csv,
+    // [Vendor.salesforce]: VendorFileType.XXXX,
+    // [Vendor.srs]: VendorFileType.sql,
 };
 
 export const getVendorBatchType = (vendor: Vendor): VendorFileType | undefined => {
@@ -38,25 +37,25 @@ export const getVendorBatchType = (vendor: Vendor): VendorFileType | undefined =
 
 type VendorTableNameMapCallback = (fileName: string) => string;
 const VENDOR_TABLE_NAME_MAP_LOOKUP: Record<Vendor, VendorTableNameMapCallback | null> = {
-    [Vendor.arranger_adv]: null, // ArrangerAdvTableNameMap,
-    [Vendor.aurora]: null, // AuroraTableNameMap,
-    [Vendor.batesville]: null, // BatesvilleTableNameMap,
-    [Vendor.crakn]: null, // CraknTableNameMap,
-    [Vendor.directors_asst]: null, // TdaTableNameMap,
-    [Vendor.funeralone]: null, // FdmTableNameMap,
+    // [Vendor.arranger_adv]: null, // ArrangerAdvTableNameMap,
+    // [Vendor.aurora]: null, // AuroraTableNameMap,
+    // [Vendor.batesville]: null, // BatesvilleTableNameMap,
+    // [Vendor.crakn]: null, // CraknTableNameMap,
+    // [Vendor.directors_asst]: null, // TdaTableNameMap,
+    // [Vendor.funeralone]: null, // FdmTableNameMap,
     [Vendor.frontrunner]: FrontRunnerTableNameMap,
-    [Vendor.fdm]: null, // FuneralOneTableNameMap,
-    [Vendor.funeraltech]: null, // FuneralTechTableNameMap,
-    [Vendor.halcyon]: null, // HalcyonTableNameMap,
-    [Vendor.last_writes]: null, // LastWritesTableNameMap,
-    [Vendor.mims]: null, // MimsTableNameMap,
-    [Vendor.mortware]: null, // MortwareTableNameMap,
-    [Vendor.none]: null, // None
-    [Vendor.osiris]: null, // OsirisTableNameMap,
-    [Vendor.parting_pro]: null, // PartingProTableNameMap,
-    [Vendor.passare]: PassareTableNameMap,
-    [Vendor.salesforce]: null, // SalesforceTableNameMap,
-    [Vendor.srs]: null, // SrsTableNameMap,
+    // [Vendor.fdm]: null, // FuneralOneTableNameMap,
+    // [Vendor.funeraltech]: null, // FuneralTechTableNameMap,
+    // [Vendor.halcyon]: null, // HalcyonTableNameMap,
+    // [Vendor.last_writes]: null, // LastWritesTableNameMap,
+    // [Vendor.mims]: null, // MimsTableNameMap,
+    // [Vendor.mortware]: null, // MortwareTableNameMap,
+    // [Vendor.none]: null, // None
+    // [Vendor.osiris]: null, // OsirisTableNameMap,
+    // [Vendor.parting_pro]: null, // PartingProTableNameMap,
+    // [Vendor.passare]: PassareTableNameMap,
+    // [Vendor.salesforce]: null, // SalesforceTableNameMap,
+    // [Vendor.srs]: null, // SrsTableNameMap,
 };
 
 export const getTableNameMap = (vendor: Vendor, fileName: string) => {
